@@ -85,6 +85,7 @@ public class MySqlDBStrategy implements DBStrategy {
         //final String sql = "Delete FROM " + tableName + " WHERE " + primarykeyName +  primaryKeyVal;
 
         //pstmt = conn.prepareStatement(sql);
+        
         pstmt = conn.prepareStatement(deleteString);
         pstmt.setObject(1, primaryKeyValue);
         recordsDeleted = pstmt.executeUpdate();

@@ -75,22 +75,19 @@ public class MySqlDBStrategy implements DBStrategy {
     }
 
     @Override
-    public int deleteRecordbyPrimaryKey(String tableName, String primarykeyName, Object primaryKeyValue) throws SQLException {
+    public int deleteRecordByPrimaryKey(String tableName, String primarykeyName, Object primaryKeyValue) throws SQLException {
         int recordsDeleted = 0;
         PreparedStatement pstmt = null;
-        String primaryKeyVal = null;
 
+        
+        final String deleteString = "Delete FROM " + tableName + " WHERE " + primarykeyName + " =?";
+        
+        //final String sql = "Delete FROM " + tableName + " WHERE " + primarykeyName +  primaryKeyVal;
 
-        if (primaryKeyValue instanceof String) {
-            primaryKeyVal = "= '" + primaryKeyValue + "'";
-        } else {
-            primaryKeyVal = "=" + primaryKeyValue;
-        }
-
-        final String sql = "Delete FROM " + tableName + " WHERE " + primarykeyName +  primaryKeyVal;
-
-        pstmt = conn.prepareStatement(sql);
-        recordsDeleted = pstmt.executeUpdate(sql);
+        //pstmt = conn.prepareStatement(sql);
+        pstmt = conn.prepareStatement(deleteString);
+        pstmt.setObject(1, primaryKeyValue);
+        recordsDeleted = pstmt.executeUpdate();
 
         return recordsDeleted;
     }
@@ -98,12 +95,14 @@ public class MySqlDBStrategy implements DBStrategy {
 //    public static void main(String[] args) throws ClassNotFoundException, SQLException {
 //        DBStrategy db = new MySqlDBStrategy();
 //        db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
-//        //int deletedRecords = db.deleteRecordbyPrimaryKey("author", "author_id", 1);
 //        List<Map<String, Object>> rawData = db.retreiveAllRecordsForTable("author", 0);
+//        int deletedRecords = db.deleteRecordbyPrimaryKey("author", "author_id", 4);
+//        List<Map<String, Object>> rawData2 = db.retreiveAllRecordsForTable("author", 0);
 //
 //        db.closeConnection();
-//        //System.out.println(deletedRecords);
+//        System.out.println(deletedRecords);
 //        System.out.println(rawData);
+//        System.out.println(rawData2);
 //    }
 
 }

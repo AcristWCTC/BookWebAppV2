@@ -44,7 +44,7 @@ public class MockAuthorDao implements AuthorDAOStrategy {
     }
 
     @Override
-    public int createAuthor(Object id) throws ClassNotFoundException, SQLException {
+    public int createAuthor(Object id, List colNames, List colValues) throws ClassNotFoundException, SQLException {
         return 0;
     }
 

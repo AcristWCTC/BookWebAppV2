@@ -63,8 +63,12 @@ public class AuthorDao implements AuthorDAOStrategy {
     }
 
     @Override
-    public int createAuthor(Object id) throws ClassNotFoundException, SQLException {
-       return 0;
+    public int createAuthor(Object id, List colNames, List colValues) throws ClassNotFoundException, SQLException, Exception {
+        db.openConnection(DRIVER_CLASS, URL, USERNAME, PASSWORD);
+        int result = db.updateRecords("author", colNames, colValues, "author_id", id);
+        db.closeConnection();
+        return result;
+
     }
 
 }

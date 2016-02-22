@@ -18,6 +18,6 @@ public interface AuthorDAOStrategy {
     List<Author> getAuthorList() throws ClassNotFoundException, SQLException;
     public int deleteAuthor(Object id) throws ClassNotFoundException, SQLException;
     public int updateAuthor(Object id, List colNames, List colValues) throws ClassNotFoundException, SQLException, Exception;
-    public int createAuthor(Object id) throws ClassNotFoundException, SQLException;
+    public int createAuthor(Object id, List colNames, List colValues) throws ClassNotFoundException, SQLException, Exception;
     
 }

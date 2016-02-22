@@ -14,14 +14,20 @@ import java.util.Map;
  * @author Adam
  */
 public interface DBStrategy {
-    
-    public abstract void openConnection(String driverClass, String url, 
-            String userName, String password) 
+
+    public abstract void openConnection(String driverClass, String url,
+            String userName, String password)
             throws ClassNotFoundException, SQLException;
-    
+
     public abstract void closeConnection() throws SQLException;
-    
-    public abstract List<Map<String, Object>> retreiveAllRecordsForTable(String tableName, int maxRecords ) throws SQLException;
-    
+
+    public abstract List<Map<String, Object>> retreiveAllRecordsForTable(String tableName, int maxRecords) throws SQLException;
+
     public abstract int deleteRecordByPrimaryKey(String tableName, String primarykeyName, Object primaryKeyValue) throws SQLException;
+
+    public int insertRecord(String tableName, List<String> colNames, List<Object> colValues) throws SQLException;
+
+    public abstract int updateRecords(String tableName, List<String> colNames, List<Object> colValues,
+            String pkColName, Object value)
+            throws SQLException, Exception;
 }

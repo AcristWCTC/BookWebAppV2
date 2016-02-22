@@ -18,6 +18,10 @@ public class AuthorService {
     public List<Author>getAuthorList() throws ClassNotFoundException, SQLException{
         return dao.getAuthorList();
     }
+    public int deleteAuthorById(Object id) throws SQLException, ClassNotFoundException{
+        return dao.deleteAuthor(id);
+    }
+    
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         AuthorService srv = new AuthorService();
         List<Author> authors = srv.getAuthorList();

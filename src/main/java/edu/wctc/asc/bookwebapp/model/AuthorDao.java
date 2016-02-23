@@ -5,23 +5,35 @@
  */
 package edu.wctc.asc.bookwebapp.model;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Inject;
 
 /**
  *
  * @author Adam
  */
-public class AuthorDao implements AuthorDAOStrategy {
+@SessionScoped
+public class AuthorDao implements AuthorDAOStrategy, Serializable {
+    @Inject
+    private DBStrategy db;
+   
 
     private final String DRIVER_CLASS = "com.mysql.jdbc.Driver";
     private final String URL = "jdbc:mysql://localhost:3306/book";
     private final String USERNAME = "root";
     private final String PASSWORD = "admin";
-    private DBStrategy db = new MySqlDBStrategy();
+
+    public AuthorDao() {
+    }
+    
+
 
     public int deleteAuthor(Object id) throws ClassNotFoundException, SQLException {
         db.openConnection(DRIVER_CLASS, URL, USERNAME, PASSWORD);
@@ -54,21 +66,31 @@ public class AuthorDao implements AuthorDAOStrategy {
 
 
     @Override
-    public int updateAuthor(Object id, List colNames, List colValues) throws ClassNotFoundException, SQLException, Exception {
+    public int updateAuthor(Object id, String authorName) throws ClassNotFoundException, SQLException, Exception {
         db.openConnection(DRIVER_CLASS, URL, USERNAME, PASSWORD);
-        int result = db.updateRecords("author", colNames, colValues, "author_id", id);
+        int result = db.updateRecords("author", Arrays.asList("author_name","date_added"), Arrays.asList(authorName), "author_id", id);
         db.closeConnection();
         return result;
 
     }
 
     @Override
-    public int createAuthor(Object id, List colNames, List colValues) throws ClassNotFoundException, SQLException, Exception {
+    public int createAuthor(Object id, String authorName) throws ClassNotFoundException, SQLException, Exception {       
         db.openConnection(DRIVER_CLASS, URL, USERNAME, PASSWORD);
-        int result = db.updateRecords("author", colNames, colValues, "author_id", id);
+        int result = db.updateRecords("author", Arrays.asList("author_name","date_added"),  Arrays.asList(authorName,new Date()), "author_id", id);
         db.closeConnection();
         return result;
 
     }
+
+    public DBStrategy getDb() {
+        return db;
+    }
+
+    public void setDb(DBStrategy db) {
+        this.db = db;
+    }
+    
+    
 
 }

@@ -8,6 +8,7 @@ package edu.wctc.asc.bookwebapp.controller;
 import edu.wctc.asc.bookwebapp.model.AuthorService;
 import java.io.IOException;
 import java.util.List;
+import javax.inject.Inject;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
 public class AuthorController extends HttpServlet {
     private static final String DEST_PAGE = "/authorResponse.jsp";
+    
+    @Inject
+    private AuthorService authorSrv;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,7 +43,6 @@ public class AuthorController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         try {
-            AuthorService authorSrv = new AuthorService();
             List responseMsg = authorSrv.getAuthorList();
 
             request.setAttribute("myMsg", responseMsg);

@@ -27,6 +27,11 @@ public class MySqlDBStrategy implements DBStrategy {
 
     private Connection conn;
 
+    public MySqlDBStrategy() {
+    }
+    
+    
+
     @Override
     public void openConnection(String driverClass, String url, String userName, String password) throws ClassNotFoundException, SQLException {
         Class.forName(driverClass);
@@ -202,18 +207,19 @@ public class MySqlDBStrategy implements DBStrategy {
         db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
         List<Map<String, Object>> rawData = db.retreiveAllRecordsForTable("author", 0);
         db.closeConnection();
-        //int deletedRecords = db.deleteRecordByPrimaryKey("author", "author_id", 4);
-        List<String> colNames = Arrays.asList("author_name");
-        List<Object> colValues = Arrays.asList("Time");
-
         db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
-        int updatedRecords = db.updateRecords("author", colNames, colValues, "author_id", 4);
+        int deletedRecords = db.deleteRecordByPrimaryKey("author", "author_id", 4);
+        //List<String> colNames = Arrays.asList("author_name");
+        //List<Object> colValues = Arrays.asList("Time");
+        db.closeConnection();
+        db.openConnection("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/book", "root", "admin");
+        //int updatedRecords = db.updateRecords("author", colNames, colValues, "author_id", 4);
         //List<Map<String, Object>> rawData2 = db.retreiveAllRecordsForTable("author", 0);
 
         db.closeConnection();
-        //System.out.println(deletedRecords);
-        System.out.println(updatedRecords);
-        System.out.println(rawData);
+        System.out.println(deletedRecords);
+        //System.out.println(updatedRecords);
+        //System.out.println(rawData);
         //System.out.println(rawData2);
     }
 

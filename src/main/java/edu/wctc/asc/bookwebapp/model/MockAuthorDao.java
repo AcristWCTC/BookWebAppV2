@@ -5,19 +5,24 @@
  */
 package edu.wctc.asc.bookwebapp.model;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import static java.util.Arrays.asList;
 import java.util.Date;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
+import javax.enterprise.inject.Alternative;
 import javax.swing.text.DateFormatter;
 
 /**
  *
  * @author Adam
  */
-public class MockAuthorDao implements AuthorDAOStrategy {
-
+@SessionScoped
+@Alternative
+public class MockAuthorDao implements AuthorDAOStrategy, Serializable {
+    private DBStrategy db;
     Date date = new Date();
 
     private Author author1 = new Author(27, "Bob Ross", date);
@@ -38,14 +43,25 @@ public class MockAuthorDao implements AuthorDAOStrategy {
     }
 
     @Override
-    public int updateAuthor(Object id, List colNames, List colValues) throws ClassNotFoundException, SQLException, Exception {
+    public int updateAuthor(Object id, String authorName) throws ClassNotFoundException, SQLException, Exception {
         return 0;
 
     }
 
     @Override
-    public int createAuthor(Object id, List colNames, List colValues) throws ClassNotFoundException, SQLException {
+    public int createAuthor(Object id, String authorName) throws ClassNotFoundException, SQLException {
         return 0;
     }
+
+    public DBStrategy getDb() {
+        return db;
+    }
+
+    public void setDb(DBStrategy db) {
+        this.db = db;
+    }
+    
+
+    
 
 }

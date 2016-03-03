@@ -5,6 +5,7 @@
  */
 package edu.wctc.asc.bookwebapp.controller;
 
+import edu.wctc.asc.bookwebapp.model.Author;
 import edu.wctc.asc.bookwebapp.model.AuthorService;
 import java.io.IOException;
 import java.util.List;
@@ -22,8 +23,16 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
 public class AuthorController extends HttpServlet {
+
     private static final String DEST_PAGE = "/authorResponse.jsp";
-    
+    private static final String AUTHOR_EDIT_VIEW = "/edit.jsp";
+    private static final String AUTHOR_ADD_VIEW = "/add.jsp";
+
+    private String driver;
+    private String url;
+    private String username;
+    private String password;
+
     @Inject
     private AuthorService authorSrv;
 
@@ -36,27 +45,73 @@ public class AuthorController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String task = request.getParameter("task");
+        String destination = DEST_PAGE;
+
+        configDbConnection();
 
         try {
-            List responseMsg = authorSrv.getAuthorList();
+            if (task.equals("ViewAuthorList")) {
+                this.refreshList(request, authorSrv);
+                destination = DEST_PAGE;
 
-            request.setAttribute("myMsg", responseMsg);
+            } else if (task.equals("DeleteAuthor")) {
+                System.out.println("TESTING");
+                String authorId = (String) request.getParameter("id");
+                int i = authorSrv.deleteAuthorById(authorId);
+                request.setAttribute("authorsDeleted", i);
+                this.refreshList(request, authorSrv);
+                destination = DEST_PAGE;
 
+            } else if (task.equals("EditAuthor")) {
+
+                String authorId = (String) request.getParameter("id");
+                Author author = authorSrv.getAuthorById(authorId);
+                request.setAttribute("author", author);
+                destination = AUTHOR_EDIT_VIEW;
+
+            } else if (task.equals("Save")) {
+                System.out.println("HI");
+                String authorName = request.getParameter("authorName");
+                String authorId = request.getParameter("authorId");
+                authorSrv.updateAuthorById(authorId, authorName);
+                this.refreshList(request, authorSrv);
+                destination = DEST_PAGE;
+            } else if (task.equals("Cancel")) {
+                this.refreshList(request, authorSrv);
+                destination = DEST_PAGE;
+
+            } else if (task.equals("Add")) {
+                destination = AUTHOR_ADD_VIEW;
+
+            } else if (task.equals("AddNewAuthor")) {
+                String authorName = request.getParameter("authorName");
+                String dateAdded = request.getParameter("date");
+                authorSrv.createAuthorById(null, authorName);
+                this.refreshList(request, authorSrv);
+                destination = DEST_PAGE;
+            }
         } catch (Exception e) {
             request.setAttribute("errorMsg", e.getMessage());
         }
 
         RequestDispatcher view
-                = request.getRequestDispatcher(DEST_PAGE);
+                = request.getRequestDispatcher(response.encodeURL(destination));
         view.forward(request, response);
 
     }
 
+    private void configDbConnection() {
+        authorSrv.getDao().initDao(driver, url, username, password);
+    }
+
+    private void refreshList(HttpServletRequest request, AuthorService authorSrv) throws Exception {
+        List<Author> authors = authorSrv.getAuthorList();
+        request.setAttribute("authors", authors);
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -97,4 +152,11 @@ public class AuthorController extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    @Override
+    public void init() throws ServletException {
+        driver = getServletContext().getInitParameter("db.driver.class");
+        url = getServletContext().getInitParameter("db.url");
+        username = getServletContext().getInitParameter("db.username");
+        password = getServletContext().getInitParameter("db.password");
+    }
 }

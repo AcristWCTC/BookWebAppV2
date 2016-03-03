@@ -7,21 +7,20 @@ package edu.wctc.asc.bookwebapp.model;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import static java.util.Arrays.asList;
 import java.util.Date;
 import java.util.List;
-import javax.enterprise.context.SessionScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Alternative;
-import javax.swing.text.DateFormatter;
 
 /**
  *
  * @author Adam
  */
-@SessionScoped
+@Dependent
 @Alternative
 public class MockAuthorDao implements AuthorDAOStrategy, Serializable {
+
     private DBStrategy db;
     Date date = new Date();
 
@@ -53,6 +52,11 @@ public class MockAuthorDao implements AuthorDAOStrategy, Serializable {
         return 0;
     }
 
+    @Override
+    public Author getAuthorById(Integer authorId) throws ClassNotFoundException, SQLException {
+        return null;
+    }
+
     public DBStrategy getDb() {
         return db;
     }
@@ -60,8 +64,50 @@ public class MockAuthorDao implements AuthorDAOStrategy, Serializable {
     public void setDb(DBStrategy db) {
         this.db = db;
     }
-    
 
-    
+    @Override
+    public void initDao(String driver, String url, String user, String password) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getDriver() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setDriver(String driver) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getUrl() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setUrl(String url) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getUsername() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setUsername(String username) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public String getPassword() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void setPassword(String password) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }

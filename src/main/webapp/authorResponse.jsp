@@ -13,37 +13,37 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+        <link href="bookStoreAppCSS.css" rel="stylesheet" type="text/css"/>
         <title>Author Info Page</title>
     </head>
     <body>
         <h1 class="col-sm-12">Author Info</h1>
         <h1 class="col-sm-4"><img src="index.png" alt=""/><h1>
 
-        <%
-            Object responseObj = request.getAttribute("myMsg");
-            request.setAttribute("MyList", responseObj);
-            Object errObj = request.getAttribute("errorMsg");
+                <div>
+                    <input class="btn btn-primary" type="button" name="authorId" value="Add Author" onclick="location.href='AuthorController?task=Add'"></input>
+                </div>
+                <br>
 
-        %>
-
-        <table class="table-striped table-bordered col-sm-6 tableCustom tableFormatter">
-            <TH class = "col-sm-4">Name</th>
-            <TH class = "col-sm-2">Id</th>
-            <TH class = "col-sm-2">Date Added</th>
-                <c:forEach items="${MyList}" var="current">
-                <tr>
-                    <td class = "col-sm-4"><c:out value="${current.authorName}" /></td>
-                    <td class = "col-sm-2"><c:out value="${current.authorId}" /></td>
-                    <td class = "col-sm-6"><fmt:formatDate pattern="yyyy-MM-dd" 
-                                    value="${current.dateAdded}" /></td>
-                </tr>
-            </c:forEach>
-        </table>
-        <div class ="col-sm-6"></div>
+                    <table class="table-striped table-bordered col-sm-6 tableCustom tableFormatter">
+                        <TH class = "col-sm-1"></th>
+                        <TH class = "col-sm-2">Name</th>
+                        <TH class = "col-sm-2">Date Added</th>
+                            <c:forEach items="${authors}" var="current">
+                            <tr>
+                                <td class = "col-sm-2"><input class="btn btn-primary" type="button" name="authorId" value="Edit/Delete" onclick="location.href='AuthorController?task=EditAuthor&id=${current.authorId}'" ></input></td>
+                                <td class = "col-sm-4"><c:out value="${current.authorName}" /></td>
+                                <td class = "col-sm-6"><fmt:formatDate pattern="M/d/yyyy" 
+                                                value="${current.dateAdded}" /></td>
+                        </c:forEach>
+                    </table>
+                <div class ="col-sm-6"></div>
 
 
 
 
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>   
-    </body>
-</html>
+
+
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>   
+                </body>
+                </html>

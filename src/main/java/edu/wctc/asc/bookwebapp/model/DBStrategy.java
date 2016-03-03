@@ -30,4 +30,7 @@ public interface DBStrategy {
     public abstract int updateRecords(String tableName, List<String> colNames, List<Object> colValues,
             String pkColName, Object value)
             throws SQLException, Exception;
+    
+     public abstract Map<String, Object> findById(String tableName, String primaryKeyFieldName,
+            Object primaryKeyValue) throws SQLException;
 }

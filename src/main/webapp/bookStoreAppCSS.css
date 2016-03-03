@@ -7,28 +7,32 @@ and open the template in the editor.
     Created on : Jan 27, 2016, 6:58:07 PM
     Author     : Adam
 */
-
-body{
-    background: beige;
+.indexBody{
     background-image: url("product_1020_full_1.jpg");
     background-size: 1080px;
     background-repeat: no-repeat;
     background-position:inherit;
-    
+
+}
+.edit{
+    padding-left: 20px;
+}
+.add{
+    padding-left: 20px;
 }
 form{
     text-align: left;
     font-size: 30px;
     padding: 5px;
     padding-bottom: 36px;
-    
+
 }
 
 .result{
     font-size: 30px;
     color: black;
     font-style:italic;
-    
+
 }
 .IDCol{
     width: 80px;
@@ -45,6 +49,6 @@ span{
     padding-top: 5%;
 }
 .tableFormatter{
-    font-size:small;
+    font-size:large;
 }
 

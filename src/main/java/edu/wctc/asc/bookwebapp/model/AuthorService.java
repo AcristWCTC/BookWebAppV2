@@ -8,16 +8,21 @@ package edu.wctc.asc.bookwebapp.model;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.List;
+import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 
 /**
  *
  * @author Adam
  */
+@SessionScoped
 public class AuthorService implements Serializable {
 
     @Inject
     private AuthorDAOStrategy dao;
+
+    public AuthorService() {
+    }
 
     public List<Author> getAuthorList() throws ClassNotFoundException, SQLException {
         return dao.getAuthorList();
@@ -29,6 +34,13 @@ public class AuthorService implements Serializable {
 
     public int createAuthorById(Object id, String authorName) throws ClassNotFoundException, SQLException, Exception {
         return dao.createAuthor(id, authorName);
+    }
+
+    public int updateAuthorById(Object id, String authorName) throws ClassNotFoundException, SQLException, Exception {
+        return dao.updateAuthor(id, authorName);
+    }
+    public Author getAuthorById(String authorId) throws SQLException, ClassNotFoundException {
+        return dao.getAuthorById(Integer.parseInt(authorId));
     }
 
     public AuthorDAOStrategy getDao() {

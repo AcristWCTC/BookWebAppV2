@@ -5,6 +5,7 @@
  */
 package edu.wctc.asc.bookwebapp.model;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,12 +19,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.enterprise.context.Dependent;
 
 /**
  *
  * @author Adam
  */
-public class MySqlDBStrategy implements DBStrategy {
+@Dependent
+public class MySqlDBStrategy implements DBStrategy, Serializable {
 
     private Connection conn;
 
@@ -79,6 +82,31 @@ public class MySqlDBStrategy implements DBStrategy {
             records.add(record);
         }
         return records;
+    }
+    
+        @Override
+    public final Map<String, Object> findById(String tableName, String primaryKeyFieldName,
+            Object primaryKeyValue) throws SQLException {
+
+        String sql = "SELECT * FROM " + tableName + " WHERE " + primaryKeyFieldName + " = ?";
+        PreparedStatement stmt = null;
+        final Map<String, Object> record = new HashMap();
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setObject(1, primaryKeyValue);
+            ResultSet rs = stmt.executeQuery();
+            final ResultSetMetaData metaData = rs.getMetaData();
+            final int fields = metaData.getColumnCount();
+
+            // Retrieve the raw data from the ResultSet and copy the values into a Map
+            // with the keys being the column names of the table.
+            if (rs.next()) {
+                for (int i = 1; i <= fields; i++) {
+                    record.put(metaData.getColumnName(i), rs.getObject(i));
+                }
+            }
+        
+        return record;
     }
 
     @Override

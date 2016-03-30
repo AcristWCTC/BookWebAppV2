@@ -5,89 +5,104 @@
  */
 package edu.wctc.asc.bookwebapp.model;
 
+import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Adam
  */
-public class Author {
-    private int authorId;
+@Entity
+@Table(name = "author")
+@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Author.findAll", query = "SELECT a FROM Author a"),
+    @NamedQuery(name = "Author.findByAuthorId", query = "SELECT a FROM Author a WHERE a.authorId = :authorId"),
+    @NamedQuery(name = "Author.findByAuthorName", query = "SELECT a FROM Author a WHERE a.authorName = :authorName"),
+    @NamedQuery(name = "Author.findByDateAdded", query = "SELECT a FROM Author a WHERE a.dateAdded = :dateAdded")})
+public class Author implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "author_id")
+    private Integer authorId;
+    @Size(max = 45)
+    @Column(name = "author_name")
     private String authorName;
+    @Column(name = "date_added")
+    @Temporal(TemporalType.DATE)
     private Date dateAdded;
 
     public Author() {
     }
 
-    public Author(int authorId) {
-        this.authorId = authorId;
-    }
-    
-    public Author(int authorId, String authorName, Date dateAdded) {
-        this.authorId = authorId;
-        this.authorName = authorName;
-        this.dateAdded = dateAdded;
-    }
-    
-    
-
-    public void setAuthorId(int authorId) {
+    public Author(Integer authorId) {
         this.authorId = authorId;
     }
 
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
-    }
-
-    public void setDateAdded(Date dateAdded) {
-        this.dateAdded = dateAdded;
-    }
-
-    public int getAuthorId() {
+    public Integer getAuthorId() {
         return authorId;
+    }
+
+    public void setAuthorId(Integer authorId) {
+        this.authorId = authorId;
     }
 
     public String getAuthorName() {
         return authorName;
     }
 
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
     public Date getDateAdded() {
         return dateAdded;
     }
 
+    public void setDateAdded(Date dateAdded) {
+        this.dateAdded = dateAdded;
+    }
+
     @Override
-    public final int hashCode() {
-        int hash = 5;
-        hash = 71 * hash + this.authorId;
+    public int hashCode() {
+        int hash = 0;
+        hash += (authorId != null ? authorId.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public final boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Author)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Author other = (Author) obj;
-        if (this.authorId != other.authorId) {
+        Author other = (Author) object;
+        if ((this.authorId == null && other.authorId != null) || (this.authorId != null && !this.authorId.equals(other.authorId))) {
             return false;
         }
         return true;
     }
 
     @Override
-    public final String toString() {
-        return "Author{" + "authorId=" + authorId + ", authorName=" + authorName + ", dateAdded=" + dateAdded + '}';
+    public String toString() {
+        return "edu.wctc.asc.bookwebapp.model.Author[ authorId=" + authorId + " ]";
     }
     
-    
-    
-    
-    
-    
 }
+//touch

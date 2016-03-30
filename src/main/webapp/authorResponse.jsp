@@ -21,29 +21,35 @@
         <h1 class="col-sm-4"><img src="index.png" alt=""/><h1>
 
                 <div>
-                    <input class="btn btn-primary" type="button" name="authorId" value="Add Author" onclick="location.href='AuthorController?task=Add'"></input>
+                    <input class="btn btn-primary" type="button" name="authorId" value="Add Author" onclick="location.href = 'AuthorController?task=Add'"></input>
                 </div>
                 <br>
 
-                    <table class="table-striped table-bordered col-sm-6 tableCustom tableFormatter">
-                        <TH class = "col-sm-1"></th>
-                        <TH class = "col-sm-2">Name</th>
-                        <TH class = "col-sm-2">Date Added</th>
-                            <c:forEach items="${authors}" var="current">
-                            <tr>
-                                <td class = "col-sm-2"><input class="btn btn-primary" type="button" name="authorId" value="Edit/Delete" onclick="location.href='AuthorController?task=EditAuthor&id=${current.authorId}'" ></input></td>
-                                <td class = "col-sm-4"><c:out value="${current.authorName}" /></td>
-                                <td class = "col-sm-6"><fmt:formatDate pattern="M/d/yyyy" 
-                                                value="${current.dateAdded}" /></td>
-                        </c:forEach>
-                    </table>
+
+                <table class="table-bordered col-sm-6 tableFormatter" style = "background-color: ${tableColor}">
+                    <TH class = "col-sm-1"></th>
+                    <TH class = "col-sm-2">Name</th>
+                    <TH class = "col-sm-2">Date Added</th>
+                        <c:forEach items="${authors}" var="current">
+                        <tr>
+                            <td class = "col-sm-2"><input class="btn btn-primary" type="button" name="authorId" value="Edit/Delete" onclick="location.href = 'AuthorController?task=EditAuthor&id=${current.authorId}'" ></input></td>
+                            <td class = "col-sm-4"><c:out value="${current.authorName}" /></td>
+                            <td class = "col-sm-6"><fmt:formatDate pattern="M/d/yyyy" 
+                                            value="${current.dateAdded}" /></td>
+                            </c:forEach>
+                </table>
                 <div class ="col-sm-6"></div>
 
 
 
 
 
-
+                <style>
+                    th,td{
+                        color: ${textColor}
+                    }
+                </style>
+                
                 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>   
                 </body>
                 </html>

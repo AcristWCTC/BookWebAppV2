@@ -29,7 +29,7 @@
 
         %>
 
-        <form method="post" action="<%= response.encodeURL("AuthorController?task=AddNewAuthor")%>>
+        <form method="post" action="<%= response.encodeURL("AuthorController?task=AddNewAuthor")%>">
             <table class="table-striped table-bordered col-sm-4 tableCustom tableFormatter">
                 <tr>
                     <th>Author Name</th>

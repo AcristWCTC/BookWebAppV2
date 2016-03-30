@@ -5,17 +5,24 @@
  */
 package edu.wctc.asc.bookwebapp.controller;
 
+import EJB.AuthorFacade;
+import edu.wctc.asc.bookwebapp.exceptions.DataAccessException;
 import edu.wctc.asc.bookwebapp.model.Author;
-import edu.wctc.asc.bookwebapp.model.AuthorService;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 /**
  *
@@ -24,17 +31,19 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
 public class AuthorController extends HttpServlet {
 
-    private static final String DEST_PAGE = "/authorResponse.jsp";
+    private static final String AUTHOR_MAIN = "/authorResponse.jsp";
     private static final String AUTHOR_EDIT_VIEW = "/edit.jsp";
     private static final String AUTHOR_ADD_VIEW = "/add.jsp";
+    private static final String HOME = "index.jsp";
 
     private String driver;
     private String url;
     private String username;
     private String password;
+    private String dbJndiName;
 
     @Inject
-    private AuthorService authorSrv;
+    private AuthorFacade authorSrv;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,53 +55,66 @@ public class AuthorController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException{
         response.setContentType("text/html;charset=UTF-8");
         String task = request.getParameter("task");
-        String destination = DEST_PAGE;
+        String destination = AUTHOR_MAIN;
 
-        configDbConnection();
+        
 
         try {
+            
+            
             if (task.equals("ViewAuthorList")) {
                 this.refreshList(request, authorSrv);
-                destination = DEST_PAGE;
+                destination = AUTHOR_MAIN;
 
             } else if (task.equals("DeleteAuthor")) {
-                System.out.println("TESTING");
+               
                 String authorId = (String) request.getParameter("id");
-                int i = authorSrv.deleteAuthorById(authorId);
-                request.setAttribute("authorsDeleted", i);
+                authorSrv.deleteAuthorById(authorId);
                 this.refreshList(request, authorSrv);
-                destination = DEST_PAGE;
+                destination = AUTHOR_MAIN;
 
             } else if (task.equals("EditAuthor")) {
 
                 String authorId = (String) request.getParameter("id");
-                Author author = authorSrv.getAuthorById(authorId);
+                Author author = authorSrv.find(Integer.parseInt(authorId));
                 request.setAttribute("author", author);
                 destination = AUTHOR_EDIT_VIEW;
 
             } else if (task.equals("Save")) {
-                System.out.println("HI");
                 String authorName = request.getParameter("authorName");
                 String authorId = request.getParameter("authorId");
-                authorSrv.updateAuthorById(authorId, authorName);
+                String date = request.getParameter("dateAdded");
+                authorSrv.updateAuthor(authorId, authorName, date);
                 this.refreshList(request, authorSrv);
-                destination = DEST_PAGE;
+                destination = AUTHOR_MAIN;
             } else if (task.equals("Cancel")) {
                 this.refreshList(request, authorSrv);
-                destination = DEST_PAGE;
+                destination = AUTHOR_MAIN;
 
             } else if (task.equals("Add")) {
+                System.out.println("Hello");
                 destination = AUTHOR_ADD_VIEW;
 
             } else if (task.equals("AddNewAuthor")) {
                 String authorName = request.getParameter("authorName");
-                String dateAdded = request.getParameter("date");
-                authorSrv.createAuthorById(null, authorName);
+                Author author = new Author();
+                author.setAuthorName(authorName);
+                author.setDateAdded(new Date());
+                authorSrv.create(author);
                 this.refreshList(request, authorSrv);
-                destination = DEST_PAGE;
+                destination = AUTHOR_MAIN;
+
+            } else if (task.equals("color")) {
+                String table = request.getParameter("TableColor");
+                String text = request.getParameter("TextColor");
+                HttpSession session = request.getSession();
+                session.setAttribute("tableColor", table);
+                session.setAttribute("textColor", text);
+                this.refreshList(request, authorSrv);
+                destination = AUTHOR_MAIN;
             }
         } catch (Exception e) {
             request.setAttribute("errorMsg", e.getMessage());
@@ -104,12 +126,8 @@ public class AuthorController extends HttpServlet {
 
     }
 
-    private void configDbConnection() {
-        authorSrv.getDao().initDao(driver, url, username, password);
-    }
-
-    private void refreshList(HttpServletRequest request, AuthorService authorSrv) throws Exception {
-        List<Author> authors = authorSrv.getAuthorList();
+    private void refreshList(HttpServletRequest request, AuthorFacade authorSrv) throws Exception {
+        List<Author> authors = authorSrv.findAll();
         request.setAttribute("authors", authors);
     }
 
@@ -154,9 +172,10 @@ public class AuthorController extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        driver = getServletContext().getInitParameter("db.driver.class");
-        url = getServletContext().getInitParameter("db.url");
-        username = getServletContext().getInitParameter("db.username");
-        password = getServletContext().getInitParameter("db.password");
+//        driver = getServletContext().getInitParameter("db.driver.class");
+//        url = getServletContext().getInitParameter("db.url");
+//        username = getServletContext().getInitParameter("db.username");
+//        password = getServletContext().getInitParameter("db.password");
+        dbJndiName = getServletContext().getInitParameter("db.jndi.name");
     }
 }

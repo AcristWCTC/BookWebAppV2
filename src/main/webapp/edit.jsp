@@ -18,8 +18,8 @@
         <link href="bookStoreAppCSS.css" rel="stylesheet" type="text/css"/>
     </head>
     <body class="edit">
-        <form method="post" action="<%= response.encodeURL("AuthorController?task=Save") %>>
-            <table class="table-striped table-bordered col-sm-6 tableCustom tableFormatter">
+        <form method="post" action="<%= response.encodeURL("AuthorController?task=Save") %>">
+            <table class = "table-striped table-bordered col-sm-6 tableCustom tableFormatter">
                 <tr></tr>
                 <th>Author Id</th>
                 <th>Author Name</th>

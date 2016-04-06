@@ -42,7 +42,8 @@ and open the template in the editor.
             $("#TableColor").spectrum({
                 showPaletteOnly: true,
                 showPalette: true,
-                hideAfterPaletteSelect:true,
+                hideAfterPaletteSelect: true,
+                allowEmpty: true,
                 change: function (color) {
                     $('#TableColor').val(color);
                 }, palette: [
@@ -56,7 +57,8 @@ and open the template in the editor.
             $("#TextColor").spectrum({
                 showPaletteOnly: true,
                 showPalette: true,
-                hideAfterPaletteSelect:true,
+                hideAfterPaletteSelect: true,
+                allowEmpty: true,
                 change: function (color2) {
                     $('#TextColor').val(color2);
                 },
@@ -66,6 +68,8 @@ and open the template in the editor.
                     ['red', 'yellow', 'green', 'blue', 'violet']
                 ]
             });
+
+
 
 
         </script>

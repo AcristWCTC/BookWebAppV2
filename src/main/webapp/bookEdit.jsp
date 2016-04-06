@@ -18,11 +18,20 @@
                 <tr></tr>
                 <th>Book Id</th>
                 <th>Title</th>
-                <th>Date Added</th>
+                <th>ISBN</th>
+                <th>Author</th>
                 <tr>
                     <td><input type="text" name="bookId" value="${book.bookId}" readonly="true"/></td>
                     <td><input type="text" name="title" value="${book.title}"/></td>
                     <td><input type="text" name="isbn" value="${book.isbn}"/></td>
+                                        <td>
+                        <select name="authorId">
+                            <c:forEach items="${authorsList}" var="author">
+                                <option value="${author.authorId}">${author.authorName}</option>
+                            </c:forEach>
+
+                        </select>
+                    </td>
                 </tr>
                 <br>
 

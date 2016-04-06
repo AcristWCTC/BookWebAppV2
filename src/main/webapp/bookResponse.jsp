@@ -13,9 +13,9 @@
     <body>
         <h1 class="col-sm-12">Book Info</h1>
         <h1 class="col-sm-4"><img src="index.png" alt=""/><h1>
-
                 <div>
                     <input class="btn btn-primary" type="button" name="bookId" value="Add Book" onclick="location.href = 'BookController?task=Add'"></input>
+                    <input class="btn btn-danger" type="button" name="back" value="Back" onclick="window.location.href='index.jsp'"></button>
                 </div>
                 <br>
 

@@ -22,6 +22,7 @@
 
                 <div>
                     <input class="btn btn-primary" type="button" name="authorId" value="Add Author" onclick="location.href = 'AuthorController?task=Add'"></input>
+                    <input class="btn btn-danger" type="button" name="back" value="Back" onclick="window.location.href='index.jsp'"></button>
                 </div>
                 <br>
 

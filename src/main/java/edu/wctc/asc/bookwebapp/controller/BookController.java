@@ -83,6 +83,7 @@ public class BookController extends HttpServlet {
                 String bookId = (String) request.getParameter("id");
                 Book book = bookSrv.find(Integer.parseInt(bookId));
                 request.setAttribute("book", book);
+                request.setAttribute("authorsList", as.findAll());
                 destination = BOOK_EDIT_VIEW;
 
             } else if (task.equals("Save")) {
@@ -90,22 +91,28 @@ public class BookController extends HttpServlet {
                 String bookId = request.getParameter("bookId");
                 String isbn = request.getParameter("isbn");
                 String authorId = request.getParameter("authorId");
-                Author author = as.find(new Integer(authorId));
+                Author author = as.find(new Integer (authorId));
                 bookSrv.updateBook(bookId, title, isbn, author);
                 this.refreshList(request, bookSrv);
                 destination = BOOK_MAIN;
+                
             } else if (task.equals("Cancel")) {
                 this.refreshList(request, bookSrv);
                 destination = BOOK_MAIN;
 
             } else if (task.equals("Add")) {
+                request.setAttribute("authorsList", as.findAll());
                 destination = BOOK_ADD_VIEW;
 
             } else if (task.equals("AddNewBook")) {
-                request.setAttribute("authorsList", as.findAll());
+                String isbn = request.getParameter("ISBN");
                 String title = request.getParameter("title");
+                String authorId = request.getParameter("author");
+                Author author = as.find(new Integer (authorId));
                 Book book = new Book();
                 book.setTitle(title);
+                book.setAuthorId(author);
+                book.setIsbn(isbn);
                 bookSrv.create(book);
                 this.refreshList(request, bookSrv);
                 destination = BOOK_MAIN;

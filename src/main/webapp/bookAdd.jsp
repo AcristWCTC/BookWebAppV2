@@ -33,11 +33,13 @@
                     <td><input type="text" name="title" value="${book.title}"/></td>
                     <td><input type="text" name="ISBN" value="${book.isbn}"/></td>
                     <td>
-                        <c:forEach items="${authorsList}" var="passenger">
-                    <option value="${authors.id}">${authors.name} /></option>
-                </c:forEach>
-            </td>
-                </select>
+                        <select name="author">
+                            <c:forEach items="${authorsList}" var="author">
+                                <option value="${author.authorId}">${author.authorName}</option>
+                            </c:forEach>
+
+                        </select>
+                    </td>
                 </tr>
                 <br>
 

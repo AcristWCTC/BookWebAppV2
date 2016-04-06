@@ -20,11 +20,17 @@ and open the template in the editor.
 
             <br>
             <form method="Post" action="<%= response.encodeURL("AuthorController?task=color")%>">
-                <input type='text' id="TableColor" name="TableColor" value="white" />
-                <input type='text' id="TextColor" name="TextColor" value="black" />
-                <input type="submit" value="List of Authors">
+                <input type='text' id="TableColor" name="TableColor" value="${tableColor}" />
+                <input type='text' id="TextColor" name="TextColor" value="${textColor}" />
+                <br>
+                <input type="submit" value="Update">
             </form>
-
+            <form method="Post" action="<%= response.encodeURL("AuthorController?task=ViewAuthorList")%>">
+                <input type="submit" value="Authors">
+            </form>
+            <form method="Post" action="<%= response.encodeURL("BookController?task=ViewBookList")%>">
+                <input type="submit" value="Book">
+            </form>
 
 
 
@@ -36,7 +42,7 @@ and open the template in the editor.
             $("#TableColor").spectrum({
                 showPaletteOnly: true,
                 showPalette: true,
-                color: 'white',
+                hideAfterPaletteSelect:true,
                 change: function (color) {
                     $('#TableColor').val(color);
                 }, palette: [
@@ -50,21 +56,17 @@ and open the template in the editor.
             $("#TextColor").spectrum({
                 showPaletteOnly: true,
                 showPalette: true,
-                color: 'black',
+                hideAfterPaletteSelect:true,
                 change: function (color2) {
                     $('#TextColor').val(color2);
                 },
                 palette: [
-                    ['black', 'white', 'blanchedalmond',
+                    ['white', 'black', 'blanchedalmond',
                         'rgb(255, 128, 0);', 'hsv 100 70 50'],
                     ['red', 'yellow', 'green', 'blue', 'violet']
                 ]
-            });	
+            });
 
-$( document ).ready(function() {
-  $("#TableColor").spectrum("set", $("#TableColor").val());
-  $("#TextColor").spectrum("set", $("#TextColor").val());
-});
 
         </script>
     </body>

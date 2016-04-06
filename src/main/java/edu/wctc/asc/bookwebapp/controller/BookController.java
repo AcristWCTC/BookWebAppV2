@@ -6,11 +6,14 @@
 package edu.wctc.asc.bookwebapp.controller;
 
 import EJB.AuthorFacade;
+import EJB.BookFacade;
 import edu.wctc.asc.bookwebapp.exceptions.DataAccessException;
 import edu.wctc.asc.bookwebapp.model.Author;
+import edu.wctc.asc.bookwebapp.model.Book;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -28,12 +31,17 @@ import javax.sql.DataSource;
  *
  * @author Adam
  */
-@WebServlet(name = "AuthorController", urlPatterns = {"/AuthorController"})
-public class AuthorController extends HttpServlet {
+@WebServlet(name = "BookController", urlPatterns = {"/BookController"})
+public class BookController extends HttpServlet {
 
-    private static final String AUTHOR_MAIN = "/authorResponse.jsp";
-    private static final String AUTHOR_EDIT_VIEW = "/edit.jsp";
-    private static final String AUTHOR_ADD_VIEW = "/add.jsp";
+    @Inject
+    private BookFacade bookSrv;
+    @Inject
+    private AuthorFacade as;
+
+    private static final String BOOK_MAIN = "/bookResponse.jsp";
+    private static final String BOOK_EDIT_VIEW = "/bookEdit.jsp";
+    private static final String BOOK_ADD_VIEW = "/bookAdd.jsp";
     private static final String HOME = "index.jsp";
 
     private String driver;
@@ -41,9 +49,6 @@ public class AuthorController extends HttpServlet {
     private String username;
     private String password;
     private String dbJndiName;
-
-    @Inject
-    private AuthorFacade authorSrv;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -55,57 +60,55 @@ public class AuthorController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException{
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String task = request.getParameter("task");
-        String destination = AUTHOR_MAIN;
-
-        
+        String destination = BOOK_MAIN;
 
         try {
-            
-            
-            if (task.equals("ViewAuthorList")) {
-                this.refreshList(request, authorSrv);
-                destination = AUTHOR_MAIN;
 
-            } else if (task.equals("DeleteAuthor")) {
-               
-                String authorId = (String) request.getParameter("id");
-                authorSrv.deleteAuthorById(authorId);
-                this.refreshList(request, authorSrv);
-                destination = AUTHOR_MAIN;
+            if (task.equals("ViewBookList")) {
+                this.refreshList(request, bookSrv);
+                destination = BOOK_MAIN;
 
-            } else if (task.equals("EditAuthor")) {
+            } else if (task.equals("DeleteBook")) {
 
-                String authorId = (String) request.getParameter("id");
-                Author author = authorSrv.find(Integer.parseInt(authorId));
-                request.setAttribute("author", author);
-                destination = AUTHOR_EDIT_VIEW;
+                String bookId = (String) request.getParameter("id");
+                bookSrv.deleteBookById(bookId);
+                this.refreshList(request, bookSrv);
+                destination = BOOK_MAIN;
+
+            } else if (task.equals("EditBook")) {
+
+                String bookId = (String) request.getParameter("id");
+                Book book = bookSrv.find(Integer.parseInt(bookId));
+                request.setAttribute("book", book);
+                destination = BOOK_EDIT_VIEW;
 
             } else if (task.equals("Save")) {
-                String authorName = request.getParameter("authorName");
+                String title = request.getParameter("title");
+                String bookId = request.getParameter("bookId");
+                String isbn = request.getParameter("isbn");
                 String authorId = request.getParameter("authorId");
-                String date = request.getParameter("dateAdded");
-                authorSrv.updateAuthor(authorId, authorName, date);
-                this.refreshList(request, authorSrv);
-                destination = AUTHOR_MAIN;
+                Author author = as.find(new Integer(authorId));
+                bookSrv.updateBook(bookId, title, isbn, author);
+                this.refreshList(request, bookSrv);
+                destination = BOOK_MAIN;
             } else if (task.equals("Cancel")) {
-                this.refreshList(request, authorSrv);
-                destination = AUTHOR_MAIN;
+                this.refreshList(request, bookSrv);
+                destination = BOOK_MAIN;
 
             } else if (task.equals("Add")) {
-                System.out.println("Hello");
-                destination = AUTHOR_ADD_VIEW;
+                destination = BOOK_ADD_VIEW;
 
-            } else if (task.equals("AddNewAuthor")) {
-                String authorName = request.getParameter("authorName");
-                Author author = new Author();
-                author.setAuthorName(authorName);
-                author.setDateAdded(new Date());
-                authorSrv.create(author);
-                this.refreshList(request, authorSrv);
-                destination = AUTHOR_MAIN;
+            } else if (task.equals("AddNewBook")) {
+                request.setAttribute("authorsList", as.findAll());
+                String title = request.getParameter("title");
+                Book book = new Book();
+                book.setTitle(title);
+                bookSrv.create(book);
+                this.refreshList(request, bookSrv);
+                destination = BOOK_MAIN;
 
             } else if (task.equals("color")) {
                 String table = request.getParameter("TableColor");
@@ -113,7 +116,7 @@ public class AuthorController extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("tableColor", table);
                 session.setAttribute("textColor", text);
-                this.refreshList(request, authorSrv);
+                this.refreshList(request, bookSrv);
                 destination = HOME;
             }
         } catch (Exception e) {
@@ -126,9 +129,9 @@ public class AuthorController extends HttpServlet {
 
     }
 
-    private void refreshList(HttpServletRequest request, AuthorFacade authorSrv) throws Exception {
-        List<Author> authors = authorSrv.findAll();
-        request.setAttribute("authors", authors);
+    private void refreshList(HttpServletRequest request, BookFacade bookSrv) throws Exception {
+        List<Book> books = bookSrv.findAll();
+        request.setAttribute("books", books);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

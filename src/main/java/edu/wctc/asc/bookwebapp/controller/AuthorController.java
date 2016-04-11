@@ -5,7 +5,7 @@
  */
 package edu.wctc.asc.bookwebapp.controller;
 
-import EJB.AuthorFacade;
+import edu.wctc.asc.bookwebapp.service.AuthorService;
 import edu.wctc.asc.bookwebapp.exceptions.DataAccessException;
 import edu.wctc.asc.bookwebapp.model.Author;
 import java.io.IOException;
@@ -16,6 +16,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -23,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  *
@@ -41,9 +44,8 @@ public class AuthorController extends HttpServlet {
     private String username;
     private String password;
     private String dbJndiName;
-
-    @Inject
-    private AuthorFacade authorSrv;
+    
+    private AuthorService authorSrv;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -72,14 +74,15 @@ public class AuthorController extends HttpServlet {
             } else if (task.equals("DeleteAuthor")) {
                
                 String authorId = (String) request.getParameter("id");
-                authorSrv.deleteAuthorById(authorId);
+                Author author = authorSrv.findById(authorId);
+                authorSrv.remove(author);
                 this.refreshList(request, authorSrv);
                 destination = AUTHOR_MAIN;
 
             } else if (task.equals("EditAuthor")) {
 
                 String authorId = (String) request.getParameter("id");
-                Author author = authorSrv.find(Integer.parseInt(authorId));
+                Author author = authorSrv.findById(authorId);
                 request.setAttribute("author", author);
                 destination = AUTHOR_EDIT_VIEW;
 
@@ -87,7 +90,7 @@ public class AuthorController extends HttpServlet {
                 String authorName = request.getParameter("authorName");
                 String authorId = request.getParameter("authorId");
                 String date = request.getParameter("dateAdded");
-                authorSrv.updateAuthor(authorId, authorName, date);
+                //authorSrv.updateAuthor(authorId, authorName, date);
                 this.refreshList(request, authorSrv);
                 destination = AUTHOR_MAIN;
             } else if (task.equals("Cancel")) {
@@ -103,7 +106,7 @@ public class AuthorController extends HttpServlet {
                 Author author = new Author();
                 author.setAuthorName(authorName);
                 author.setDateAdded(new Date());
-                authorSrv.create(author);
+                //authorSrv.(author);
                 this.refreshList(request, authorSrv);
                 destination = AUTHOR_MAIN;
 
@@ -126,7 +129,7 @@ public class AuthorController extends HttpServlet {
 
     }
 
-    private void refreshList(HttpServletRequest request, AuthorFacade authorSrv) throws Exception {
+    private void refreshList(HttpServletRequest request, AuthorService authorSrv) throws Exception {
         List<Author> authors = authorSrv.findAll();
         request.setAttribute("authors", authors);
     }
@@ -172,10 +175,11 @@ public class AuthorController extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-//        driver = getServletContext().getInitParameter("db.driver.class");
-//        url = getServletContext().getInitParameter("db.url");
-//        username = getServletContext().getInitParameter("db.username");
-//        password = getServletContext().getInitParameter("db.password");
-        dbJndiName = getServletContext().getInitParameter("db.jndi.name");
+        // Ask Spring for object to inject
+        ServletContext sctx = getServletContext();
+        WebApplicationContext ctx
+                = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        authorSrv = (AuthorService) ctx.getBean("authorService");
+
     }
 }

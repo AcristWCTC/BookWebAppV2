@@ -5,11 +5,11 @@
  */
 package edu.wctc.asc.bookwebapp.controller;
 
-import EJB.AuthorFacade;
-import EJB.BookFacade;
 import edu.wctc.asc.bookwebapp.exceptions.DataAccessException;
 import edu.wctc.asc.bookwebapp.model.Author;
 import edu.wctc.asc.bookwebapp.model.Book;
+import edu.wctc.asc.bookwebapp.service.AuthorService;
+import edu.wctc.asc.bookwebapp.service.BookService;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +19,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -26,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  *
@@ -34,10 +37,8 @@ import javax.sql.DataSource;
 @WebServlet(name = "BookController", urlPatterns = {"/BookController"})
 public class BookController extends HttpServlet {
 
-    @Inject
-    private BookFacade bookSrv;
-    @Inject
-    private AuthorFacade as;
+    private BookService bookSrv;
+    private AuthorService as;
 
     private static final String BOOK_MAIN = "/bookResponse.jsp";
     private static final String BOOK_EDIT_VIEW = "/bookEdit.jsp";
@@ -74,14 +75,15 @@ public class BookController extends HttpServlet {
             } else if (task.equals("DeleteBook")) {
 
                 String bookId = (String) request.getParameter("id");
-                bookSrv.deleteBookById(bookId);
+                Book book = bookSrv.findById(bookId);
+                bookSrv.remove(book);
                 this.refreshList(request, bookSrv);
                 destination = BOOK_MAIN;
 
             } else if (task.equals("EditBook")) {
 
                 String bookId = (String) request.getParameter("id");
-                Book book = bookSrv.find(Integer.parseInt(bookId));
+                Book book = bookSrv.findById(bookId);
                 request.setAttribute("book", book);
                 request.setAttribute("authorsList", as.findAll());
                 destination = BOOK_EDIT_VIEW;
@@ -91,8 +93,8 @@ public class BookController extends HttpServlet {
                 String bookId = request.getParameter("bookId");
                 String isbn = request.getParameter("isbn");
                 String authorId = request.getParameter("authorId");
-                Author author = as.find(new Integer (authorId));
-                bookSrv.updateBook(bookId, title, isbn, author);
+                Author author = as.findById(authorId);
+                //bookSrv.updateBook(bookId, title, isbn, author);
                 this.refreshList(request, bookSrv);
                 destination = BOOK_MAIN;
                 
@@ -108,12 +110,12 @@ public class BookController extends HttpServlet {
                 String isbn = request.getParameter("ISBN");
                 String title = request.getParameter("title");
                 String authorId = request.getParameter("author");
-                Author author = as.find(new Integer (authorId));
+                Author author = as.findById(authorId);
                 Book book = new Book();
                 book.setTitle(title);
                 book.setAuthorId(author);
                 book.setIsbn(isbn);
-                bookSrv.create(book);
+                //bookSrv.create(book);
                 this.refreshList(request, bookSrv);
                 destination = BOOK_MAIN;
 
@@ -136,7 +138,7 @@ public class BookController extends HttpServlet {
 
     }
 
-    private void refreshList(HttpServletRequest request, BookFacade bookSrv) throws Exception {
+    private void refreshList(HttpServletRequest request, BookService bookSrv) throws Exception {
         List<Book> books = bookSrv.findAll();
         request.setAttribute("books", books);
     }
@@ -182,10 +184,11 @@ public class BookController extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-//        driver = getServletContext().getInitParameter("db.driver.class");
-//        url = getServletContext().getInitParameter("db.url");
-//        username = getServletContext().getInitParameter("db.username");
-//        password = getServletContext().getInitParameter("db.password");
-        dbJndiName = getServletContext().getInitParameter("db.jndi.name");
+        // Ask Spring for object to inject
+        ServletContext sctx = getServletContext();
+        WebApplicationContext ctx
+                = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        as = (AuthorService) ctx.getBean("authorService");
+        bookSrv = (BookService) ctx.getBean("bookService");
     }
 }

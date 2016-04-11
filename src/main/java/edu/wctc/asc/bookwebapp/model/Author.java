@@ -8,7 +8,9 @@ package edu.wctc.asc.bookwebapp.model;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,8 +40,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Author.findByDateAdded", query = "SELECT a FROM Author a WHERE a.dateAdded = :dateAdded")})
 public class Author implements Serializable {
 
-    @OneToMany(mappedBy = "authorId")
-    private Collection<Book> bookCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -53,6 +53,8 @@ public class Author implements Serializable {
     @Column(name = "date_added")
     @Temporal(TemporalType.DATE)
     private Date dateAdded;
+    @OneToMany(mappedBy = "authorId", cascade = CascadeType.ALL)
+    private Set<Book> bookSet;
 
     public Author() {
     }
@@ -85,6 +87,15 @@ public class Author implements Serializable {
         this.dateAdded = dateAdded;
     }
 
+    public Set<Book> getBookSet() {
+        return bookSet;
+    }
+
+    public void setBookSet(Set<Book> bookSet) {
+        this.bookSet = bookSet;
+    }
+    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -110,14 +121,7 @@ public class Author implements Serializable {
         return "edu.wctc.asc.bookwebapp.model.Author[ authorId=" + authorId + " ]";
     }
 
-    @XmlTransient
-    public Collection<Book> getBookCollection() {
-        return bookCollection;
-    }
 
-    public void setBookCollection(Collection<Book> bookCollection) {
-        this.bookCollection = bookCollection;
-    }
-    
+
 }
 //touch

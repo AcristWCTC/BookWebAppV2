@@ -93,8 +93,14 @@ public class BookController extends HttpServlet {
                 String bookId = request.getParameter("bookId");
                 String isbn = request.getParameter("isbn");
                 String authorId = request.getParameter("authorId");
+                int id = Integer.parseInt(bookId);
                 Author author = as.findById(authorId);
-                //bookSrv.updateBook(bookId, title, isbn, author);
+                Book book = new Book();
+                book.setAuthorId(author);
+                book.setBookId(id);
+                book.setIsbn(isbn);
+                book.setTitle(title);
+                bookSrv.edit(book);
                 this.refreshList(request, bookSrv);
                 destination = BOOK_MAIN;
                 
@@ -115,7 +121,7 @@ public class BookController extends HttpServlet {
                 book.setTitle(title);
                 book.setAuthorId(author);
                 book.setIsbn(isbn);
-                //bookSrv.create(book);
+                bookSrv.edit(book);
                 this.refreshList(request, bookSrv);
                 destination = BOOK_MAIN;
 

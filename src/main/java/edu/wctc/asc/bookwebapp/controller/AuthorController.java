@@ -89,8 +89,9 @@ public class AuthorController extends HttpServlet {
             } else if (task.equals("Save")) {
                 String authorName = request.getParameter("authorName");
                 String authorId = request.getParameter("authorId");
-                String date = request.getParameter("dateAdded");
-                //authorSrv.updateAuthor(authorId, authorName, date);
+                Author author = authorSrv.findById(authorId);
+                author.setAuthorName(authorName);
+                authorSrv.edit(author);
                 this.refreshList(request, authorSrv);
                 destination = AUTHOR_MAIN;
             } else if (task.equals("Cancel")) {
@@ -103,10 +104,10 @@ public class AuthorController extends HttpServlet {
 
             } else if (task.equals("AddNewAuthor")) {
                 String authorName = request.getParameter("authorName");
-                Author author = new Author();
+                Author author = new Author(0);
                 author.setAuthorName(authorName);
                 author.setDateAdded(new Date());
-                //authorSrv.(author);
+                authorSrv.edit(author);
                 this.refreshList(request, authorSrv);
                 destination = AUTHOR_MAIN;
 

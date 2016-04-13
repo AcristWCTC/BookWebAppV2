@@ -58,7 +58,7 @@ public class AuthorService {
 
         // Instead do this, it's faster
         Author author = authorRepo.findOne(authorId);
-        author.getBookSet().size();
+        //author.getBookSet().size();
         return author;
     }
 

@@ -31,7 +31,7 @@
     </context:component-scan>
     <context:annotation-config/>
     
-    <jpa:repositories base-package="edu.wctc.asc.bookwebapp.repository.*" />
+    <jpa:repositories base-package="edu.wctc.asc.bookwebapp.repository"/>
      
     <!-- Server managed connection pool accessed via JNDI -->
     <jee:jndi-lookup id="dataSource" jndi-name="jdbc/book"/>
@@ -40,7 +40,7 @@
     <bean id="entityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="book_PU"/>
-        <property name="packagesToScan" value="edu.wctc.asc.bookwebapp.entity"/>
+        <property name="packagesToScan" value="edu.wctc.asc.bookwebapp.model"/>
         <property name="dataSource" ref="dataSource" />
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">

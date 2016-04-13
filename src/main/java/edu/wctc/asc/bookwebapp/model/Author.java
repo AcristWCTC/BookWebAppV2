@@ -87,6 +87,7 @@ public class Author implements Serializable {
         this.dateAdded = dateAdded;
     }
 
+    @XmlTransient
     public Set<Book> getBookSet() {
         return bookSet;
     }
